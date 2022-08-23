@@ -61,13 +61,19 @@ if __name__ == '__main__':
     formatDate = "%Y-%m-%d %a" if args.format == "long" else "%d/%m (%a)"
     count = 0
     weekly = 0
+    fromAdded = False
     while count < args.max:
       # get date in format in holidays set
       printedDate = curr.strftime("%Y%m%d")
       # skip holidays and blocked dates
       if not (printedDate in holidays[curr.year] or printedDate in args.blocked):
-        print("{0:2d}: {1}".format(count + 1, curr.strftime(formatDate)))
+        if fromAdded:
+          print("*{0:2d}: {1}".format(count + 1, curr.strftime(formatDate)))
+          fromAdded = False
+        else:
+          print("{0:3d}: {1}".format(count + 1, curr.strftime(formatDate)))
         count += 1
+
       weekly += 1
       assert not added or added[0] > curr
       # if there is an added entry between curr and the next entry, consider the added one first
@@ -79,6 +85,7 @@ if __name__ == '__main__':
         curr = added[0]
         # remove current head
         added = added[1:]
+        fromAdded = True
         continue
 
       # reset to initial weekday if completed entries per week
