@@ -21,7 +21,27 @@ holidays = {2022 : [
   "20221102",
   "20221115",
   "20221208",
-  "20221225"]}
+  "20221225"],
+            2023 : [
+              "20230101",
+              "20230220",
+              "20230221",
+              "20230222",
+              "20230407",
+              "20230421",
+              "20230501",
+              "20230608",
+              "20230609",
+              "20230815",
+              "20230907",
+              "20231012",
+              "20231028",
+              "20231102",
+              "20231115",
+              "20231208",
+              "20231225"          ]
+
+}
 
 def nextWeekday(d, weekday):
     daysAhead = weekday - d.weekday()
@@ -73,6 +93,8 @@ if __name__ == '__main__':
         else:
           print("{0:3d}: {1}".format(count + 1, curr.strftime(formatDate)))
         count += 1
+      else:
+        print(" --: {1}".format(count + 1, curr.strftime(formatDate)))
 
       weekly += 1
       assert not added or added[0] > curr
