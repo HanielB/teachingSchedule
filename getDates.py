@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
-import argparse
+import argparse, codecs
 
 from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
+
+contents = []
 
 holidays = {2022 : [
   "20220101",
@@ -22,7 +24,8 @@ holidays = {2022 : [
   "20221115",
   "20221208",
   "20221225"],
-            2023 : [
+            2023 :
+            [
               "20230101",
               "20230220",
               "20230221",
@@ -43,6 +46,25 @@ holidays = {2022 : [
 
 }
 
+def printDate(count, formatDate, fromAdded, printLatex):
+  global contents
+  if printLatex:
+    while True:
+      loop = False
+      content = contents[count] if count < len(contents) else ""
+      if content.startswith("*"):
+        loop = True
+        content = content[1:]
+        contents = contents[:count] + contents[count + 1:]
+      print("{0}{1} & {2} & {3} \\\\".format("*" if fromAdded else "", "{0:2d}".format(count + 1) if not loop else "--",
+                                              curr.strftime(formatDate), content))
+      if not loop:
+        break
+  else:
+    print("{0}{1:2d}: {2}".format("*" if fromAdded else "", count + 1, curr.strftime(formatDate)))
+
+
+
 def nextWeekday(d, weekday):
     daysAhead = weekday - d.weekday()
     if daysAhead <= 0: # Target day already happened this week
@@ -53,7 +75,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--start', dest="start", help='Start date (in format YYYYMMDD)')
-    parser.add_argument('--format', dest="format", choices = ["long", "short"],
+    parser.add_argument('--format', dest="format", choices = ["long", "short", "latex"],
                         default="long", help='Format in which to print dates (def. long: YYYY-MM-DD day)')
     parser.add_argument('--regularity', dest="regularity",
                         default=2, help='Interval between entries (def. 2)')
@@ -67,6 +89,9 @@ if __name__ == '__main__':
     parser.add_argument('--add', dest="added", action='append', default=[],
                         help="Add ad-hoc date to consider (YYYYMMDD)")
 
+    parser.add_argument('-c', dest="content", default=[],
+                        help="Read file with contents (one per line)")
+
     args = parser.parse_args()
 
     if not args.start:
@@ -75,10 +100,16 @@ if __name__ == '__main__':
 
     added = sorted([datetime.strptime(x, '%Y%m%d') for x in args.added])
 
+    if args.content:
+      with open(args.content,"rb") as readContents:
+        contents = list(codecs.iterdecode(readContents, 'utf-8'))
+        contents = [c.replace("\n","") for c in contents]
+
     curr = datetime.strptime(args.start, '%Y%m%d')
     lastRegular = curr
     startDay = curr.weekday()
     formatDate = "%Y-%m-%d %a" if args.format == "long" else "%d/%m (%a)"
+    printLatex = args.format == "latex"
     count = 0
     weekly = 0
     fromAdded = False
@@ -87,14 +118,15 @@ if __name__ == '__main__':
       printedDate = curr.strftime("%Y%m%d")
       # skip holidays and blocked dates
       if not (printedDate in holidays[curr.year] or printedDate in args.blocked):
+        printDate(count, formatDate, fromAdded, printLatex)
         if fromAdded:
-          print("*{0:2d}: {1}".format(count + 1, curr.strftime(formatDate)))
           fromAdded = False
-        else:
-          print("{0:3d}: {1}".format(count + 1, curr.strftime(formatDate)))
         count += 1
       else:
-        print(" --: {1}".format(count + 1, curr.strftime(formatDate)))
+        if printLatex:
+          print("-- & {0} & No class \\\\".format(curr.strftime(formatDate)))
+        else:
+          print("-- {0}".format(curr.strftime(formatDate)))
 
       weekly += 1
       assert not added or added[0] > curr
