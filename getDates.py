@@ -113,7 +113,7 @@ if __name__ == '__main__':
     count = 0
     weekly = 0
     fromAdded = False
-    while count < args.max:
+    while count < args.max or count < len(contents):
       # get date in format in holidays set
       printedDate = curr.strftime("%Y%m%d")
       # skip holidays and blocked dates
@@ -126,7 +126,7 @@ if __name__ == '__main__':
         if printLatex:
           print("-- & {0} & No class \\\\".format(curr.strftime(formatDate)))
         else:
-          print("-- {0}".format(curr.strftime(formatDate)))
+          print("--: {0}".format(curr.strftime(formatDate)))
 
       weekly += 1
       assert not added or added[0] > curr
