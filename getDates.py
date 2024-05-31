@@ -105,7 +105,7 @@ if __name__ == '__main__':
     parser.add_argument('--max', dest="max",
                         default=30, help='Generate up to max entries (def. 30)')
     parser.add_argument('--block', dest="blocked", action='append', default=[],
-                        help="Add date to block (YYYYMMDD)")
+                        help="Add date to block (YYYYMMDD[..YYYYMMDD])")
     parser.add_argument('--add', dest="added", action='append', default=[],
                         help="Add ad-hoc date to consider (YYYYMMDD)")
 
@@ -117,6 +117,17 @@ if __name__ == '__main__':
     if not args.start:
       print("Need start date")
       quit()
+
+    blocked = []
+    for block in args.blocked:
+      if not ".." in block:
+        lb = datetime.strptime(block, '%Y%m%d')
+        blocked += [(lb, lb)]
+        continue
+      split = block.split("..")
+      lb = datetime.strptime(split[0], '%Y%m%d')
+      ub = datetime.strptime(split[1], '%Y%m%d')
+      blocked += [(lb, ub)]
 
     added = sorted([datetime.strptime(x, '%Y%m%d') for x in args.added])
 
@@ -137,7 +148,7 @@ if __name__ == '__main__':
       # get date in format in holidays set
       printedDate = curr.strftime("%Y%m%d")
       # skip holidays and blocked dates
-      if not (printedDate in holidays[curr.year] or printedDate in args.blocked):
+      if not (printedDate in holidays[curr.year] or list(filter(lambda x : curr >= x[0] and curr <= x[1], blocked))):
         printDate(count, formatDate, fromAdded, printLatex)
         if fromAdded:
           fromAdded = False
