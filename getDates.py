@@ -7,80 +7,87 @@ from dateutil.relativedelta import relativedelta
 
 contents = []
 
-holidays = {2022 : [
-    "20220101",
-    "20220228",
-    "20220301",
-    "20220302",
-    "20220415",
-    "20220421",
-    "20220501",
-    "20220616",
-    "20220815",
-    "20220907",
-    "20221012",
-    "20221028",
-    "20221102",
-    "20221115",
-    "20221208",
-    "20221225"],
-            2023 :
-            [
-                "20230101",
-                "20230220",
-                "20230221",
-                "20230222",
-                "20230407",
-                "20230421",
-                "20230501",
-                "20230608",
-                "20230609",
-                "20230815",
-                "20230907",
-                "20231012",
-                "20231028",
-                "20231102",
-                "20231115",
-                "20231208",
-                "20231225"          ],
-            2024 :
-            [
-                "20240101",
-                "20240212",
-                "20240213",
-                "20240214",
-                "20240329",
-                "20240421",
-                "20240501",
-                "20240530",
-                "20240531",
-                "20240815",
-                "20240907",
-                "20241012",
-                "20241028",
-                "20241102",
-                "20241115",
-                "20241120",
-                "20241208",
-                "20241225"          ],
-            2025 :
-            ["20250101",
-             "20250303",
-             "20250304",
-             "20250305",
-             "20250418",
-             "20250421",
-             "20250501",
-             "20250619",
-             "20250620",
-             "20250815",
-             "20250907",
-             "20251012",
-             "20251028",
-             "20251102",
-             "20251115",
-             "20251208",
-             "20251225"],
+holidays = {
+    2022 :
+    {
+        "20220101": "Ano novo",
+        "20220228": "Carnaval",
+        "20220301": "Carnaval",
+        "20220302": "Carnaval",
+        "20220415": "Paixão de Cristo",
+        "20220421": "Tiradentes",
+        "20220501": "Dia do Trabalho",
+        "20220616": "Corpus Christi",
+        "20220617": "Imprensado",
+        "20220815": "Assunção de Nossa Senhora",
+        "20220907": "Independência do Brasil",
+        "20221012": "Padroeira do Brasil",
+        "20221028": "Dia do Servidor Público",
+        "20221102": "Finados",
+        "20221115": "Proclamação da República",
+        "20221208": "Imaculada Conceição",
+        "20221225": "Natal"
+    },
+    2023 :
+    {
+        "20230101": "Ano novo",
+        "20230220": "Carnaval",
+        "20230221": "Carnaval",
+        "20230222": "Carnaval",
+        "20230407": "Paixão de Cristo",
+        "20230421": "Tiradentes",
+        "20230501": "Dia do Trabalho",
+        "20230608": "Corpus Christi",
+        "20230609": "Imprensado",
+        "20230815": "Assunção de Nossa Senhora",
+        "20230907": "Independência do Brasil",
+        "20231012": "Padroeira do Brasil",
+        "20231028": "Dia do Servidor Público",
+        "20231102": "Finados",
+        "20231115": "Proclamação da República",
+        "20231208": "Imaculada Conceição",
+        "20231225": "Natal"
+    },
+    2024 :
+    {
+        "20240101": "Ano novo",
+        "20240212": "Carnaval",
+        "20240213": "Carnaval",
+        "20240214": "Carnaval",
+        "20240329": "Paixão de Cristo",
+        "20240421": "Tiradentes",
+        "20240501": "Dia do Trabalho",
+        "20240530": "Corpus Christi",
+        "20240531": "Imprensado",
+        "20240815": "Assunção de Nossa Senhora",
+        "20240907": "Independência do Brasil",
+        "20241012": "Padroeira do Brasil",
+        "20241028": "Dia do Servidor Público",
+        "20241102": "Finados",
+        "20241115": "Proclamação da República",
+        "20241208": "Imaculada Conceição",
+        "20241225": "Natal"
+    },
+    2025 :
+    {
+        "20250101": "Ano novo",
+        "20250303": "Carnaval",
+        "20250304": "Carnaval",
+        "20250305": "Carnaval",
+        "20250418": "Paixão de Cristo",
+        "20250421": "Tiradentes",
+        "20250501": "Dia do Trabalho",
+        "20250619": "Corpus Christi",
+        "20250620": "Imprensado",
+        "20250815": "Assunção de Nossa Senhora",
+        "20250907": "Independência do Brasil",
+        "20251012": "Padroeira do Brasil",
+        "20251028": "Dia do Servidor Público",
+        "20251102": "Finados",
+        "20251115": "Proclamação da República",
+        "20251208": "Imaculada Conceição",
+        "20251225": "Natal"
+    },
 }
 
 def printDate(count, formatDate, fromAdded, printLatex):
@@ -172,7 +179,7 @@ if __name__ == '__main__':
         count += 1
       else:
         if printLatex:
-          print("-- & {0} & No class \\\\".format(curr.strftime(formatDate)))
+          print("-- & {0} & {1} \\\\".format(curr.strftime(formatDate), holidays[curr.year][printedDate] if printedDate in holidays[curr.year] else "Blocked"))
         else:
           print("--: {0}".format(curr.strftime(formatDate)))
 
