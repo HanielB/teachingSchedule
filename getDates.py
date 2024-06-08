@@ -128,8 +128,9 @@ if __name__ == '__main__':
                         help='How many entries per week (def. 2). Next week will start on same day of start date')
     parser.add_argument('--max', dest="max",
                         default=30, help='Generate up to max entries (def. 30)')
-    parser.add_argument('--block', dest="blocked", action='append', default=[],
-                        help="Add date to block (YYYYMMDD[..YYYYMMDD])")
+
+    parser.add_argument('--block', dest="blocked", action='append', default=[], nargs=2,
+                        help="Add date to block (YYYYMMDD[..YYYYMMDD]) and a description")
     parser.add_argument('--add', dest="added", action='append', default=[],
                         help="Add ad-hoc date to consider (YYYYMMDD)")
 
@@ -143,15 +144,17 @@ if __name__ == '__main__':
       quit()
 
     blocked = []
-    for block in args.blocked:
+    for blockDesc in args.blocked:
+      block = blockDesc[0]
+      desc = blockDesc[1]
       if not ".." in block:
         lb = datetime.strptime(block, '%Y%m%d')
-        blocked += [(lb, lb)]
+        blocked += [[(lb, lb), desc]]
         continue
       split = block.split("..")
       lb = datetime.strptime(split[0], '%Y%m%d')
       ub = datetime.strptime(split[1], '%Y%m%d')
-      blocked += [(lb, ub)]
+      blocked += [[(lb, ub), desc]]
 
     added = sorted([datetime.strptime(x, '%Y%m%d') for x in args.added])
 
@@ -172,14 +175,15 @@ if __name__ == '__main__':
       # get date in format in holidays set
       printedDate = curr.strftime("%Y%m%d")
       # skip holidays and blocked dates
-      if not (printedDate in holidays[curr.year] or list(filter(lambda x : curr >= x[0] and curr <= x[1], blocked))):
+      if not (printedDate in holidays[curr.year] or list(filter(lambda x : curr >= x[0][0] and curr <= x[0][1], blocked))):
         printDate(count, formatDate, fromAdded, printLatex)
         if fromAdded:
           fromAdded = False
         count += 1
       else:
         if printLatex:
-          print("-- & {0} & {1} \\\\".format(curr.strftime(formatDate), holidays[curr.year][printedDate] if printedDate in holidays[curr.year] else "Blocked"))
+          blockedHits = list(filter(lambda x : curr >= x[0][0] and curr <= x[0][1], blocked))
+          print("-- & {0} & {1} \\\\".format(curr.strftime(formatDate), holidays[curr.year][printedDate] if printedDate in holidays[curr.year] else blockedHits[0][1]))
         else:
           print("--: {0}".format(curr.strftime(formatDate)))
 
