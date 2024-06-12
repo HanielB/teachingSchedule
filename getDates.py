@@ -6,7 +6,6 @@ from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
 contents = []
-helpNeeded = []
 
 holidays = {
     2022 :
@@ -91,7 +90,7 @@ holidays = {
     },
 }
 
-def printDate(count, formatDate, fromAdded, printLatex, helpNeeded):
+def printDate(count, formatDate, fromAdded, printLatex, annotation):
   global contents
   if printLatex:
     while True:
@@ -102,7 +101,7 @@ def printDate(count, formatDate, fromAdded, printLatex, helpNeeded):
         content = content[1:]
         contents = contents[:count] + contents[count + 1:]
       print("{0}{1} & {2} & {3} \\\\".format("*" if fromAdded else "", "{0:2d}".format(count + 1) if not loop else "--",
-                                              curr.strftime(formatDate), content + ("" if not helpNeeded else " (Help)")))
+                                              curr.strftime(formatDate), content + ("" if not annotation else " (" + annotation + ")")))
       if not loop:
         break
   else:
@@ -129,10 +128,10 @@ if __name__ == '__main__':
                         help='How many entries per week (def. 2). Next week will start on same day of start date')
     parser.add_argument('--max', dest="max",
                         default=30, help='Generate up to max entries (def. 30)')
-    parser.add_argument('--help-needed', dest="help", action='append', default=[],
-                        help="Mark a date when help is needed (YYYYMMDD)")
+    parser.add_argument('--annotate', dest="annotate", action='append', default=[], nargs=2,
+                        help="Mark a date with given annotation (YYYYMMDD and an annotation)")
     parser.add_argument('--block', dest="blocked", action='append', default=[], nargs=2,
-                        help="Add date to block (YYYYMMDD[..YYYYMMDD]) and a description")
+                        help="Add date to block (YYYYMMDD[..YYYYMMDD] and a description)")
     parser.add_argument('--add', dest="added", action='append', default=[],
                         help="Add ad-hoc date to consider (YYYYMMDD)")
 
@@ -158,6 +157,10 @@ if __name__ == '__main__':
       ub = datetime.strptime(split[1], '%Y%m%d')
       blocked += [[(lb, ub), desc]]
 
+    annotate = {}
+    for annotateWhat in args.annotate:
+        annotate[annotateWhat[0]] = annotateWhat[1]
+
     added = sorted([datetime.strptime(x, '%Y%m%d') for x in args.added])
 
     if args.content:
@@ -178,7 +181,7 @@ if __name__ == '__main__':
       printedDate = curr.strftime("%Y%m%d")
       # skip holidays and blocked dates
       if not (printedDate in holidays[curr.year] or list(filter(lambda x : curr >= x[0][0] and curr <= x[0][1], blocked))):
-        printDate(count, formatDate, fromAdded, printLatex, printedDate in args.help)
+        printDate(count, formatDate, fromAdded, printLatex, "" if not printedDate in annotate else annotate[printedDate])
         if fromAdded:
           fromAdded = False
         count += 1
