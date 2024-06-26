@@ -62,7 +62,6 @@ holidays = {
         "20240815": "Assunção de Nossa Senhora",
         "20240907": "Independência do Brasil",
         "20241012": "Padroeira do Brasil",
-        "20241028": "Dia do Servidor Público",
         "20241102": "Finados",
         "20241115": "Proclamação da República",
         "20241208": "Imaculada Conceição",
@@ -105,7 +104,7 @@ def printDate(count, formatDate, fromAdded, printLatex, annotation):
       if not loop:
         break
   else:
-    print("{0}{1:2d}: {2}".format("*" if fromAdded else "", count + 1, curr.strftime(formatDate)))
+    print("{0}{1:2d}: {2}{3}".format("*" if fromAdded else "", count + 1, curr.strftime(formatDate), ("" if not annotation else " (" + annotation + ")")))
 
 
 
@@ -186,11 +185,11 @@ if __name__ == '__main__':
           fromAdded = False
         count += 1
       else:
+        blockedHits = list(filter(lambda x : curr >= x[0][0] and curr <= x[0][1], blocked))
         if printLatex:
-          blockedHits = list(filter(lambda x : curr >= x[0][0] and curr <= x[0][1], blocked))
           print("-- & {0} & {1} \\\\".format(curr.strftime(formatDate), ("Holiday: " + holidays[curr.year][printedDate]) if printedDate in holidays[curr.year] else "Blocked: "+ blockedHits[0][1]))
         else:
-          print("--: {0}".format(curr.strftime(formatDate)))
+          print("--: {0}{1}".format(curr.strftime(formatDate), (" (Holiday: " + holidays[curr.year][printedDate] + ")") if printedDate in holidays[curr.year] else " (Blocked: "+ blockedHits[0][1] + ")"))
 
       weekly += 1
       assert not added or added[0] > curr
