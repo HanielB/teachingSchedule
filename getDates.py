@@ -64,6 +64,7 @@ holidays = {
         "20241012": "Padroeira do Brasil",
         "20241102": "Finados",
         "20241115": "Proclamação da República",
+        "20241120": "Dia da Consciência Negra",
         "20241208": "Imaculada Conceição",
         "20241225": "Natal"
     },
@@ -84,6 +85,7 @@ holidays = {
         "20251028": "Dia do Servidor Público",
         "20251102": "Finados",
         "20251115": "Proclamação da República",
+        "20241120": "Dia da Consciência Negra",
         "20251208": "Imaculada Conceição",
         "20251225": "Natal"
     },
